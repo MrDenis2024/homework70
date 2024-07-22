@@ -3,3 +3,9 @@
   flex-direction: column;
   min-height: 100vh;
 }
+
+.img {
+  border-radius: 10px;
+  width: 200px;
+  height: 200px;
+}

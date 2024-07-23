@@ -33,3 +33,7 @@ export const fetchImg = createAsyncThunk<string | null, string, { state: RootSta
   }
   return null;
 });
+
+export const deleteContact = createAsyncThunk<void, string, {state: RootState}>('contacts/deleteContact',async (contactId) => {
+  await axiosApi.delete(`phoneBook/${contactId}.json`);
+});

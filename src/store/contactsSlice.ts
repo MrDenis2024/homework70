@@ -1,10 +1,11 @@
 import {createSlice} from '@reduxjs/toolkit';
-import {createContact, fetchContacts, fetchImg} from './contactsThunk';
+import {createContact, deleteContact, fetchContacts, fetchImg} from './contactsThunk';
 import {ContactMutation} from '../types';
 
 export interface ContactsState {
   createLoading: boolean;
   fetchLoading: boolean;
+  deleteLoading: boolean;
   imgStatus: string | null;
   contacts: ContactMutation[];
 }
@@ -12,6 +13,7 @@ export interface ContactsState {
 const initialState: ContactsState = {
   createLoading: false,
   fetchLoading: false,
+  deleteLoading: false,
   imgStatus: null,
   contacts: [],
 };
@@ -46,14 +48,23 @@ const contactsSlice = createSlice({
       state.imgStatus = null;
     });
 
+    builder.addCase(deleteContact.pending, (state) => {
+      state.deleteLoading = true;
+    }).addCase(deleteContact.fulfilled, (state) => {
+      state.deleteLoading = false;
+    }). addCase(deleteContact.rejected, (state) => {
+      state.deleteLoading = false;
+    });
+
   },
   selectors: {
     selectCreateContactLoading: (state) => state.createLoading,
     selectFetchContactsLoading: (state) => state.fetchLoading,
     selectContacts: (state) => state.contacts,
     selectImgStatus: (state) => state.imgStatus,
+    selectDeleteLoading: (state) => state.deleteLoading,
   },
 });
 
 export const contactsReducer = contactsSlice.reducer;
-export const {selectCreateContactLoading, selectFetchContactsLoading, selectContacts, selectImgStatus,} = contactsSlice.selectors;
+export const {selectCreateContactLoading, selectFetchContactsLoading, selectContacts, selectImgStatus, selectDeleteLoading,} = contactsSlice.selectors;

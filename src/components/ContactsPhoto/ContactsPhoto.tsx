@@ -3,14 +3,15 @@ import {toast} from 'react-toastify';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
 import {fetchImg} from '../../store/contactsThunk';
 import {selectImgStatus} from '../../store/contactsSlice';
+import {Contact, ContactMutation} from '../../types';
 
 interface Props {
-  photo: string;
+  contact: Contact | ContactMutation;
 }
 
 const placeholderPhoto = 'https://static.vecteezy.com/system/resources/thumbnails/002/318/271/small_2x/user-profile-icon-free-vector.jpg';
 
-const ContactsPhoto: React.FC<Props> = ({photo}) => {
+const ContactsPhoto: React.FC<Props> = ({contact}) => {
   const dispatch = useAppDispatch();
   const imgStatus = useAppSelector(selectImgStatus);
 
@@ -23,13 +24,13 @@ const ContactsPhoto: React.FC<Props> = ({photo}) => {
   }, [dispatch]);
 
   useEffect(() => {
-    void validImg(photo);
-  }, [validImg, photo]);
+    void validImg(contact.photo);
+  }, [validImg, contact.photo]);
 
   return (
     <>
       {imgStatus ? (
-        <img className='img' src={photo} alt={photo} />
+        <img className='img' src={contact.photo} alt={contact.name} />
       ) : (
         <img className='img' src={placeholderPhoto} alt='placeholder' />
       )}

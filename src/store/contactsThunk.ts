@@ -2,7 +2,6 @@ import {createAsyncThunk} from '@reduxjs/toolkit';
 import axiosApi from '../axiosApi';
 import {ApiContacts, Contact, ContactMutation} from '../types';
 import {RootState} from '../app/store';
-import axios from 'axios';
 
 export const createContact = createAsyncThunk<void, Contact, {state: RootState}>('contacts/createContact', async (contact) => {
   await axiosApi.post('/phoneBook.json', contact);
@@ -26,14 +25,25 @@ export const fetchContacts = createAsyncThunk<ContactMutation[], void, {state: R
   return newContacts;
 });
 
-export const fetchImg = createAsyncThunk<string | null, string, { state: RootState }>('contacts/fetchImg',async (url) => {
-  const { headers: imgResponse } = await axios.head(url);
-  if (imgResponse['content-type'].startsWith('image/')) {
-    return url;
-  }
-  return null;
-});
-
 export const deleteContact = createAsyncThunk<void, string, {state: RootState}>('contacts/deleteContact',async (contactId) => {
   await axiosApi.delete(`phoneBook/${contactId}.json`);
+});
+
+export const fetchOneContact = createAsyncThunk<Contact, string, {state: RootState}>('contacts/fetchOneContact', async (id) => {
+  const {data: contact} = await axiosApi.get<Contact | null>(`/phoneBook/${id}.json`);
+
+  if(contact === null) {
+    throw new Error('Not found');
+  }
+
+  return contact;
+});
+
+export interface UpdateContactArg {
+  id: string,
+  contact: Contact,
+}
+
+export const updateContact = createAsyncThunk<void, UpdateContactArg, {state: RootState}>('contacts/updateContact',async ({id, contact}) => {
+  await axiosApi.put(`/phoneBook/${id}.json`, contact);
 });

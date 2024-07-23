@@ -7,7 +7,7 @@ const Toolbar = () => {
         <NavLink to='/' className='navbar-brand'>Contacts</NavLink>
         <ul className='navbar-nav d-flex flex-row gap-3 flex-nowrap'>
           <li className='nav-item'>
-            <NavLink to="/new-contacts" className='nav-link'>Add new contact</NavLink>
+            <NavLink to="/new-contact" className='nav-link'>Add new contact</NavLink>
           </li>
         </ul>
       </div>

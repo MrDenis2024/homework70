@@ -10,8 +10,8 @@ import {ToastContainer} from 'react-toastify';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <ToastContainer position="bottom-right" />
     <Provider store={store}>
+      <ToastContainer position="bottom-right" />
       <BrowserRouter>
         <App />
       </BrowserRouter>

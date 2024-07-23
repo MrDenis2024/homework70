@@ -1,21 +1,25 @@
 import {createSlice} from '@reduxjs/toolkit';
-import {createContact, deleteContact, fetchContacts, fetchImg} from './contactsThunk';
-import {ContactMutation} from '../types';
+import {createContact, deleteContact, fetchContacts, fetchOneContact, updateContact} from './contactsThunk';
+import {Contact, ContactMutation} from '../types';
 
 export interface ContactsState {
   createLoading: boolean;
   fetchLoading: boolean;
   deleteLoading: boolean;
-  imgStatus: string | null;
+  fetchOneLoading: boolean;
+  updateLoading: boolean;
   contacts: ContactMutation[];
+  oneContact: Contact | null;
 }
 
 const initialState: ContactsState = {
   createLoading: false,
   fetchLoading: false,
   deleteLoading: false,
-  imgStatus: null,
+  fetchOneLoading: false,
+  updateLoading: false,
   contacts: [],
+  oneContact: null,
 };
 
 const contactsSlice = createSlice({
@@ -40,14 +44,6 @@ const contactsSlice = createSlice({
       state.fetchLoading = false;
     });
 
-    builder.addCase(fetchImg.pending, (state) => {
-      state.imgStatus = null;
-    }).addCase(fetchImg.fulfilled, (state, {payload: status}) => {
-      state.imgStatus = status;
-    }).addCase(fetchImg.rejected, (state) => {
-      state.imgStatus = null;
-    });
-
     builder.addCase(deleteContact.pending, (state) => {
       state.deleteLoading = true;
     }).addCase(deleteContact.fulfilled, (state) => {
@@ -56,15 +52,42 @@ const contactsSlice = createSlice({
       state.deleteLoading = false;
     });
 
+    builder.addCase(fetchOneContact.pending, (state) => {
+      state.oneContact = null;
+      state.fetchOneLoading = true;
+    }).addCase(fetchOneContact.fulfilled, (state, {payload: contact}) => {
+      state.oneContact = contact;
+      state.fetchOneLoading = false;
+    }).addCase(fetchOneContact.rejected, (state) => {
+      state.fetchOneLoading = false;
+    });
+
+    builder.addCase(updateContact.pending, (state) => {
+      state.updateLoading = true;
+    }).addCase(updateContact.fulfilled, (state) => {
+      state.updateLoading = false;
+    }).addCase(updateContact.rejected, (state) => {
+      state.updateLoading = false;
+    });
   },
   selectors: {
     selectCreateContactLoading: (state) => state.createLoading,
     selectFetchContactsLoading: (state) => state.fetchLoading,
     selectContacts: (state) => state.contacts,
-    selectImgStatus: (state) => state.imgStatus,
     selectDeleteLoading: (state) => state.deleteLoading,
+    selectFetchOneLoading: (state) => state.fetchOneLoading,
+    selectOneContact: (state) => state.oneContact,
+    selectUpdateLoading: (state) => state.updateLoading,
   },
 });
 
 export const contactsReducer = contactsSlice.reducer;
-export const {selectCreateContactLoading, selectFetchContactsLoading, selectContacts, selectImgStatus, selectDeleteLoading,} = contactsSlice.selectors;
+export const {
+  selectCreateContactLoading,
+  selectFetchContactsLoading,
+  selectContacts,
+  selectDeleteLoading,
+  selectFetchOneLoading,
+  selectOneContact,
+  selectUpdateLoading,
+} = contactsSlice.selectors;

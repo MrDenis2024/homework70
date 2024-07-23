@@ -6,6 +6,7 @@ import ButtonSpinner from '../Spinner/ButoonSpinner';
 
 interface Props {
   onSubmit: (contact: Contact) => void;
+  existingContact?: Contact;
   isLoading: boolean;
 }
 
@@ -16,9 +17,10 @@ const emptyState: Contact = {
   photo: '',
 };
 
-const ContactsForm: React.FC<Props> = ({onSubmit, isLoading}) => {
+const ContactsForm: React.FC<Props> = ({onSubmit, isLoading, existingContact}) => {
+  const initialState : Contact = existingContact ? (existingContact) : emptyState;
   const navigate = useNavigate();
-  const [contact, setContact] = useState<Contact>(emptyState);
+  const [contact, setContact] = useState<Contact>(initialState);
 
   const changeContact = (event: React.ChangeEvent<HTMLInputElement>) => {
     const {name, value} = event.target;
@@ -30,7 +32,6 @@ const ContactsForm: React.FC<Props> = ({onSubmit, isLoading}) => {
 
   const onFormSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-
     onSubmit(contact);
   };
 
@@ -55,11 +56,11 @@ const ContactsForm: React.FC<Props> = ({onSubmit, isLoading}) => {
       </div>
       <div className="form-group d-flex mt-3">
         <p className='me-3'>Photo preview:</p>
-        <ContactsPhoto contact={contact} />
+        <ContactsPhoto photo={contact.photo} name={contact.name} />
       </div>
       <div className="mt-2">
         <button type="submit" className="btn btn-primary me-3" disabled={isLoading}>{isLoading && <ButtonSpinner/>}Save</button>
-        <button type="button" className="btn btn-success" onClick={() => navigate('/')} disabled={isLoading}>{isLoading && <ButtonSpinner/>} Back to contacts</button>
+        <button type="button" className="btn btn-success" onClick={() => navigate('/')} disabled={isLoading}>Back to contacts</button>
       </div>
     </form>
   );

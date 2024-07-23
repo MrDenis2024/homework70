@@ -20,6 +20,7 @@ const NewContacts = () => {
       toast.error('Произошла ошибка созадние контакта');
     }
   };
+
   return (
     <div>
       <ContactsForm onSubmit={onSubmit} isLoading={isCreating}/>

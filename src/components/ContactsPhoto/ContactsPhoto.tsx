@@ -1,39 +1,31 @@
-import React, {useCallback, useEffect} from 'react';
+import React from 'react';
 import {toast} from 'react-toastify';
-import {useAppDispatch, useAppSelector} from '../../app/hooks';
-import {fetchImg} from '../../store/contactsThunk';
-import {selectImgStatus} from '../../store/contactsSlice';
-import {Contact, ContactMutation} from '../../types';
 
 interface Props {
-  contact: Contact | ContactMutation;
+  photo: string;
+  name: string;
 }
 
 const placeholderPhoto = 'https://static.vecteezy.com/system/resources/thumbnails/002/318/271/small_2x/user-profile-icon-free-vector.jpg';
 
-const ContactsPhoto: React.FC<Props> = ({contact}) => {
-  const dispatch = useAppDispatch();
-  const imgStatus = useAppSelector(selectImgStatus);
-
-  const validImg = useCallback ( async (url: string) => {
+const ContactsPhoto: React.FC<Props> = ({photo, name}) => {
+  const isValidURL = (url: string) => {
     try {
-      await dispatch(fetchImg(url)).unwrap();
+      new URL(url);
+      return true;
     } catch (e) {
-      toast.error('Could not load contacts photo');
+      return false;
     }
-  }, [dispatch]);
+  };
 
-  useEffect(() => {
-    void validImg(contact.photo);
-  }, [validImg, contact.photo]);
+  const handleError = (event: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    event.currentTarget.src = placeholderPhoto;
+    toast.error('Неправельная ссылка');
+  };
 
   return (
     <>
-      {imgStatus ? (
-        <img className='img' src={contact.photo} alt={contact.name} />
-      ) : (
-        <img className='img' src={placeholderPhoto} alt='placeholder' />
-      )}
+      <img className='img' src={isValidURL(photo) ? photo : placeholderPhoto} onError={handleError} alt={name} />
     </>
   );
 };

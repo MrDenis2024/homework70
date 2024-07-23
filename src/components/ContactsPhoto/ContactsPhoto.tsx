@@ -1,25 +1,39 @@
-import React from 'react';
-import {Contact} from '../../types';
+import React, {useCallback, useEffect} from 'react';
+import {toast} from 'react-toastify';
+import {useAppDispatch, useAppSelector} from '../../app/hooks';
+import {fetchImg} from '../../store/contactsThunk';
+import {selectImgStatus} from '../../store/contactsSlice';
 
 interface Props {
-  contact: Contact;
+  photo: string;
 }
 
 const placeholderPhoto = 'https://static.vecteezy.com/system/resources/thumbnails/002/318/271/small_2x/user-profile-icon-free-vector.jpg';
 
-const ContactsPhoto: React.FC<Props> = ({contact}) => {
-  const isValidURL = (url: string) => {
+const ContactsPhoto: React.FC<Props> = ({photo}) => {
+  const dispatch = useAppDispatch();
+  const imgStatus = useAppSelector(selectImgStatus);
+
+  const validImg = useCallback ( async (url: string) => {
     try {
-      new URL(url);
-      return true;
+      await dispatch(fetchImg(url)).unwrap();
     } catch (e) {
-      return false;
+      toast.error('Could not load contacts photo');
     }
-  };
+  }, [dispatch]);
+
+  useEffect(() => {
+    void validImg(photo);
+  }, [validImg, photo]);
 
   return (
-    <img className='img' src={isValidURL(contact.photo) ? contact.photo : placeholderPhoto}
-         alt={isValidURL(contact.photo) ? contact.name : 'placeholder'}/>
+    <>
+      {imgStatus ? (
+        <img className='img' src={photo} alt={photo} />
+      ) : (
+        <img className='img' src={placeholderPhoto} alt='placeholder' />
+      )}
+    </>
   );
 };
 
